@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Germak CareerPro — Build a Career That Gets Noticed</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        accent: { 500: '#8b5cf6', 600: '#7c3aed' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- PayPal JS SDK (Sandbox default fallback) -->
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+        .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); }
+        .gradient-text { background: linear-gradient(90deg, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        /* A4 Page Preview Styling */
+        .a4-preview { width: 100%; max-width: 794px; min-height: 1123px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin: 0 auto; padding: 48px; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3"></div>
+
+    <!-- MAIN NAVBAR -->
+    <nav class="sticky top-0 z-40 glass-nav border-b border-slate-200/80 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('landing')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-md">G</div>
+                <span class="text-2xl font-extrabold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">Germak <span class="text-blue-600">CareerPro</span></span>
+            </div>
+
+            <!-- Public Nav Items -->
+            <div id="public-nav-links" class="hidden md:flex items-center gap-8 font-semibold text-slate-600 text-sm">
+                <a href="#features" class="hover:text-blue-600 transition">Features</a>
+                <a href="#how-it-works" class="hover:text-blue-600 transition">How It Works</a>
+                <a href="#pricing" class="hover:text-blue-600 transition">Pricing</a>
+                <a href="#faq" class="hover:text-blue-600 transition">FAQ</a>
+            </div>
+
+            <!-- Auth Buttons -->
+            <div id="auth-nav-buttons" class="flex items-center gap-4">
+                <button onclick="openAuthModal('login')" class="text-sm font-bold text-slate-700 hover:text-blue-600 px-4 py-2 rounded-lg transition">Sign In</button>
+                <button onclick="openAuthModal('register')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition">Get Started</button>
+            </div>
+
+            <!-- Logged In Nav State -->
+            <div id="user-nav-profile" class="hidden flex items-center gap-4">
+                <span id="user-badge-premium" class="hidden bg-emerald-100 text-emerald-800 text-xs font-black px-2.5 py-1 rounded-full border border-emerald-300">
+                    <i class="fa-solid fa-crown mr-1 text-amber-500"></i> PRO UNLOCKED
+                </span>
+                <button onclick="navigateTo('dashboard')" class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-xl transition">
+                    <i class="fa-solid fa-gauge mr-2"></i>Dashboard
+                </button>
+                <button onclick="handleLogout()" class="text-slate-500 hover:text-red-600 text-sm font-semibold px-3 py-2 transition" title="Logout">
+                    <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- VIEWS CONTAINER -->
+    <main class="flex-grow">
+
+        <!-- 1. LANDING PAGE VIEW -->
+        <section id="view-landing" class="block">
+            <!-- Hero -->
+            <div class="hero-gradient text-white pt-20 pb-32 px-4 relative overflow-hidden">
+                <div class="max-w-7xl mx-auto text-center relative z-10">
+                    <span class="inline-block bg-blue-500/20 text-blue-300 border border-blue-400/30 font-semibold text-xs px-4 py-1.5 rounded-full uppercase tracking-wider mb-6">
+                        AI-Powered Career Toolkit
+                    </span>
+                    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl mx-auto leading-tight">
+                        Build a Career That <span class="gradient-text">Gets Noticed</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+                        Create professional CVs, cover letters, application letters, and LinkedIn profiles in minutes with intelligent AI formatting.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+                        <button onclick="startGenerator('cv')" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-base px-8 py-4 rounded-xl shadow-lg hover:shadow-blue-500/30 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Create My CV
+                        </button>
+                        <button onclick="scrollToSection('pricing')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-base px-8 py-4 rounded-xl border border-slate-700 transition">
+                            Unlock $10 Lifetime Access
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Cards -->
+            <div id="features" class="max-w-7xl mx-auto px-4 py-24">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-4">Everything You Need to Get Hired</h2>
+                    <p class="text-slate-600 max-w-2xl mx-auto">Designed for professionals, graduates, and job seekers aiming for modern recruitment standards.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200 card-hover">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl font-bold mb-6">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Professional CV Builder</h3>
+                        <p class="text-slate-600 leading-relaxed">Multi-template CV engine with real-time PDF formatting, customized color schemes, and skill mapping.</p>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200 card-hover">
+                        <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-xl font-bold mb-6">
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Cover & Application Letters</h3>
+                        <p class="text-slate-600 leading-relaxed">Tailor application letters for target hiring managers and job descriptions effortlessly.</p>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200 card-hover">
+                        <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-xl font-bold mb-6">
+                            <i class="fa-brands fa-linkedin"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">LinkedIn Profile Optimizer</h3>
+                        <p class="text-slate-600 leading-relaxed">Generate search-optimized headlines, compelling About sections, and targeted experience bullets.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Section -->
+            <div id="pricing" class="bg-slate-900 text-white py-24">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="max-w-lg mx-auto bg-slate-800 rounded-3xl border border-slate-700 p-8 sm:p-10 text-center relative shadow-2xl">
+                        <span class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-black text-xs px-4 py-1.5 rounded-full uppercase tracking-wider">
+                            ONE-TIME PAYMENT
+                        </span>
+                        <h3 class="text-2xl font-extrabold mt-4 mb-2">CareerPro Unlimited</h3>
+                        <div class="my-6">
+                            <span class="text-5xl font-black text-white">$10</span>
+                            <span class="text-slate-400 font-medium"> USD / Lifetime</span>
+                        </div>
+                        <p class="text-slate-300 text-sm mb-8">Pay $10 and unlock your complete career document toolkit forever. No recurring subscriptions.</p>
+
+                        <ul class="text-left text-sm space-y-4 mb-8 text-slate-200">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-400"></i> Unlimited CV Creation</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-400"></i> Cover & Application Letter Generators</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-400"></i> LinkedIn Profile Optimizer</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-400"></i> AI Writing Assistant & Content Enhancement</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-400"></i> High-Resolution PDF Downloads</li>
+                        </ul>
+
+                        <button onclick="triggerPaymentModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg transition">
+                            Unlock CareerPro — $10
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="hidden max-w-7xl mx-auto px-4 py-10">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Sidebar -->
+                <aside class="w-full md:w-64 bg-white p-6 rounded-2xl border border-slate-200 h-fit space-y-2">
+                    <button onclick="navigateTo('dashboard')" class="w-full text-left font-bold text-blue-600 bg-blue-50 px-4 py-3 rounded-xl flex items-center gap-3">
+                        <i class="fa-solid fa-chart-pie"></i> Dashboard
+                    </button>
+                    <button onclick="startGenerator('cv')" class="w-full text-left font-semibold text-slate-700 hover:bg-slate-50 px-4 py-3 rounded-xl flex items-center gap-3">
+                        <i class="fa-solid fa-file-user"></i> Create CV
+                    </button>
+                    <button onclick="startGenerator('cover-letter')" class="w-full text-left font-semibold text-slate-700 hover:bg-slate-50 px-4 py-3 rounded-xl flex items-center gap-3">
+                        <i class="fa-solid fa-envelope"></i> Cover Letter
+                    </button>
+                    <button onclick="startGenerator('application-letter')" class="w-full text-left font-semibold text-slate-700 hover:bg-slate-50 px-4 py-3 rounded-xl flex items-center gap-3">
+                        <i class="fa-solid fa-paper-plane"></i> Application Letter
+                    </button>
+                    <button onclick="startGenerator('linkedin')" class="w-full text-left font-semibold text-slate-700 hover:bg-slate-50 px-4 py-3 rounded-xl flex items-center gap-3">
+                        <i class="fa-brands fa-linkedin"></i> LinkedIn Optimizer
+                    </button>
+                    <div id="admin-sidebar-link" class="hidden pt-4 border-t border-slate-100">
+                        <button onclick="loadAdminStats()" class="w-full text-left font-bold text-amber-700 bg-amber-50 px-4 py-3 rounded-xl flex items-center gap-3">
+                            <i class="fa-solid fa-shield-halved"></i> Admin Control
+                        </button>
+                    </div>
+                </aside>
+
+                <!-- Dashboard Content -->
+                <main class="flex-grow space-y-8">
+                    <!-- Metrics Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200">
+                            <span class="text-slate-500 text-xs font-bold uppercase">Total Documents</span>
+                            <div id="stat-total-docs" class="text-3xl font-extrabold text-slate-900 mt-2">0</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200">
+                            <span class="text-slate-500 text-xs font-bold uppercase">CVs Generated</span>
+                            <div id="stat-cv-count" class="text-3xl font-extrabold text-blue-600 mt-2">0</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200">
+                            <span class="text-slate-500 text-xs font-bold uppercase">Cover Letters</span>
+                            <div id="stat-cover-count" class="text-3xl font-extrabold text-indigo-600 mt-2">0</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200">
+                            <span class="text-slate-500 text-xs font-bold uppercase">Account Status</span>
+                            <div id="stat-account-status" class="text-lg font-extrabold text-slate-700 mt-2">Free</div>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-slate-900">My Career Documents</h2>
+                        <button onclick="startGenerator('cv')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow transition">
+                            + Create Document
+                        </button>
+                    </div>
+
+                    <!-- Documents Table -->
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-wider">
+                                    <th class="p-4">Document Title</th>
+                                    <th class="p-4">Type</th>
+                                    <th class="p-4">Last Updated</th>
+                                    <th class="p-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="documents-table-body" class="divide-y divide-slate-100">
+                                <tr>
+                                    <td colspan="4" class="p-8 text-center text-slate-400">Loading documents...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+            </div>
+        </section>
+
+        <!-- 3. DOCUMENT GENERATOR & EDITOR VIEW -->
+        <section id="view-generator" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <div class="flex items-center justify-between mb-6">
+                <button onclick="navigateTo('dashboard')" class="text-slate-600 font-semibold text-sm hover:text-blue-600">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Back to Dashboard
+                </button>
+                <div class="flex items-center gap-3">
+                    <select id="doc-template-select" onchange="renderLivePreview()" class="bg-white border border-slate-300 text-slate-700 font-semibold text-sm rounded-xl px-3 py-2">
+                        <option value="modern">Modern Template</option>
+                        <option value="classic">Classic Template</option>
+                        <option value="executive">Executive Template</option>
+                        <option value="minimal">Minimal Template</option>
+                    </select>
+                    <button onclick="saveCurrentDocument()" class="bg-slate-900 text-white text-sm font-bold px-4 py-2 rounded-xl">Save</button>
+                    <button onclick="downloadDocumentPDF()" class="bg-blue-600 text-white text-sm font-bold px-4 py-2 rounded-xl">
+                        <i class="fa-solid fa-file-pdf mr-1"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Form Inputs -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-6 max-h-[800px] overflow-y-auto">
+                    <h2 id="generator-form-title" class="text-xl font-bold text-slate-900 border-b pb-4">CV Builder</h2>
+
+                    <!-- CV Form Fields -->
+                    <div id="form-fields-cv" class="space-y-4">
+                        <h3 class="font-bold text-sm text-slate-700">Personal Information</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="cv-name" placeholder="Full Name" oninput="renderLivePreview()" class="p-3 border rounded-xl w-full text-sm">
+                            <input type="text" id="cv-title" placeholder="Professional Title" oninput="renderLivePreview()" class="p-3 border rounded-xl w-full text-sm">
+                            <input type="email" id="cv-email" placeholder="Email Address" oninput="renderLivePreview()" class="p-3 border rounded-xl w-full text-sm">
+                            <input type="text" id="cv-phone" placeholder="Phone Number" oninput="renderLivePreview()" class="p-3 border rounded-xl w-full text-sm">
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="pt-2">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Profile Image</label>
+                            <input type="file" id="cv-photo-input" onchange="handleFileUpload(event)" class="text-xs text-slate-500">
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2">
+                            <h3 class="font-bold text-sm text-slate-700">Professional Summary</h3>
+                            <button onclick="enhanceWithAI('summary')" class="text-xs text-blue-600 font-bold hover:underline">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Improve with AI
+                            </button>
+                        </div>
+                        <textarea id="cv-summary" rows="4" oninput="renderLivePreview()" placeholder="Brief summary of your professional background..." class="p-3 border rounded-xl w-full text-sm"></textarea>
+
+                        <h3 class="font-bold text-sm text-slate-700">Skills (Comma Separated)</h3>
+                        <input type="text" id="cv-skills" placeholder="Leadership, Python, Project Management" oninput="renderLivePreview()" class="p-3 border rounded-xl w-full text-sm">
+                    </div>
+
+                    <!-- Letter Form Fields -->
+                    <div id="form-fields-letter" class="hidden space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="letter-name" placeholder="Your Full Name" oninput="renderLivePreview()" class="p-3 border rounded-xl w-full text-sm">
+                            <input type="email" id="letter-email" placeholder="Your Email" oninput="renderLivePreview()" class="p-3 border rounded-xl w-full text-sm">
+                            <input type="text" id="letter-company" placeholder="Company Name" oninput="renderLivePreview()" class="p-3 border rounded-xl w-full text-sm">
+                            <input type="text" id="letter-position" placeholder="Target Job Position" oninput="renderLivePreview()" class="p-3 border rounded-xl w-full text-sm">
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <h3 class="font-bold text-sm text-slate-700">Letter Body</h3>
+                            <button onclick="enhanceWithAI('cover_letter')" class="text-xs text-blue-600 font-bold hover:underline">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Generate with AI
+                            </button>
+                        </div>
+                        <textarea id="letter-text" rows="10" oninput="renderLivePreview()" placeholder="Write or generate your cover letter content..." class="p-3 border rounded-xl w-full text-sm"></textarea>
+                    </div>
+                </div>
+
+                <!-- Live A4 Document Preview -->
+                <div class="bg-slate-200 p-6 rounded-2xl flex justify-center overflow-x-auto max-h-[800px]">
+                    <div id="a4-document-container" class="a4-preview text-slate-800">
+                        <!-- Rendered Document Preview HTML -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- AUTH MODAL -->
+    <div id="modal-auth" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl">
+            <button onclick="closeModal('modal-auth')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 id="auth-modal-title" class="text-2xl font-bold text-slate-900 mb-6">Sign In</h3>
+
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div id="field-fullname" class="hidden">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="auth-name" class="w-full p-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+                    <input type="email" id="auth-email" required class="w-full p-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+                    <input type="password" id="auth-password" required class="w-full p-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div id="field-confirm-pw" class="hidden">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Confirm Password</label>
+                    <input type="password" id="auth-confirm-pw" class="w-full p-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition shadow-md">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL ($10 USD / MTN / PayPal) -->
+    <div id="modal-payment" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-lg w-full relative shadow-2xl text-center">
+            <button onclick="closeModal('modal-payment')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900">Unlock Your Career Toolkit</h3>
+            <p class="text-slate-600 text-sm mt-2 mb-6">Pay a one-time $10 fee to access unlimited CVs, Cover Letters, Application Letters, and AI tools.</p>
+
+            <!-- PayPal Button Container -->
+            <div id="paypal-button-container" class="mb-6"></div>
+
+            <div class="relative flex py-2 items-center">
+                <div class="flex-grow border-t border-slate-200"></div>
+                <span class="flex-shrink mx-4 text-slate-400 text-xs font-bold uppercase">Or Mobile Money</span>
+                <div class="flex-grow border-t border-slate-200"></div>
+            </div>
+
+            <!-- MTN Mobile Money -->
+            <div class="mt-4 space-y-3">
+                <input type="text" id="mtn-phone-number" placeholder="Enter MTN Ghana Phone (e.g., 024XXXXXXX)" class="w-full p-3 border border-slate-300 rounded-xl text-sm text-center">
+                <button onclick="handleMTNPayment()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-mobile-screen-button"></i> Pay with MTN Mobile Money
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 py-12 text-sm mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>© 2026 Germak CareerPro. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- CLIENT JAVASCRIPT LOGIC -->
+    <script>
+        // Global State
+        let currentUser = null;
+        let currentDocId = null;
+        let currentDocType = 'cv';
+        let authMode = 'login';
+        let uploadedPhotoUrl = '';
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+            initPayPalSDK();
+        });
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-slate-900 text-white' : 'bg-red-600 text-white';
+            toast.className = `${bgColor} px-5 py-3 rounded-xl shadow-xl text-sm font-semibold flex items-center gap-3 transition-all transform duration-300`;
+            toast.innerHTML = `<i class="${type === 'success' ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-solid fa-triangle-exclamation'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 4000);
+        }
+
+        // Auth Checker
+        async function checkAuthStatus() {
+            try {
+                const res = await fetch('/api/auth/me');
+                const data = await res.json();
+                if (data.authenticated) {
+                    currentUser = data.user;
+                    updateUIForLoggedInUser();
+                } else {
+                    updateUIForLoggedOutUser();
+                }
+            } catch (err) {
+                console.error("Auth check error:", err);
+            }
+        }
+
+        function updateUIForLoggedInUser() {
+            document.getElementById('auth-nav-buttons').classList.add('hidden');
+            document.getElementById('user-nav-profile').classList.remove('hidden');
+            if (currentUser.is_premium) {
+                document.getElementById('user-badge-premium').classList.remove('hidden');
+            }
+            if (currentUser.role === 'admin') {
+                document.getElementById('admin-sidebar-link').classList.remove('hidden');
+            }
+        }
+
+        function updateUIForLoggedOutUser() {
+            document.getElementById('auth-nav-buttons').classList.remove('hidden');
+            document.getElementById('user-nav-profile').classList.add('hidden');
+        }
+
+        // View Navigation Router
+        function navigateTo(viewName) {
+            ['landing', 'dashboard', 'generator'].forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden');
+            });
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+
+            if (viewName === 'dashboard') {
+                loadDashboardData();
+            }
+        }
+
+        // Auth Modal Controls
+        function openAuthModal(mode) {
+            authMode = mode;
+            document.getElementById('auth-modal-title').innerText = mode === 'login' ? 'Sign In' : 'Create Account';
+            document.getElementById('auth-submit-btn').innerText = mode === 'login' ? 'Sign In' : 'Register';
+            
+            if (mode === 'register') {
+                document.getElementById('field-fullname').classList.remove('hidden');
+                document.getElementById('field-confirm-pw').classList.remove('hidden');
+            } else {
+                document.getElementById('field-fullname').classList.add('hidden');
+                document.getElementById('field-confirm-pw').classList.add('hidden');
+            }
+            document.getElementById('modal-auth').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+
+            const payload = { email, password };
+            if (authMode === 'register') {
+                payload.full_name = document.getElementById('auth-name').value;
+                payload.confirm_password = document.getElementById('auth-confirm-pw').value;
+            }
+
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                currentUser = data.user;
+                showToast(data.message);
+                closeModal('modal-auth');
+                updateUIForLoggedInUser();
+                navigateTo('dashboard');
+            } else {
+                showToast(data.error || 'Authentication failed.', 'error');
+            }
+        }
+
+        async function handleLogout() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            currentUser = null;
+            updateUIForLoggedOutUser();
+            navigateTo('landing');
+            showToast('Logged out successfully.');
+        }
+
+        // Dashboard Loader
+        async function loadDashboardData() {
+            if (!currentUser) return;
+            const res = await fetch('/api/documents');
+            const docs = await res.json();
+
+            document.getElementById('stat-total-docs').innerText = docs.length;
+            document.getElementById('stat-cv-count').innerText = docs.filter(d => d.type === 'cv').length;
+            document.getElementById('stat-cover-count').innerText = docs.filter(d => d.type === 'cover-letter').length;
+            document.getElementById('stat-account-status').innerText = currentUser.is_premium ? 'PRO Unlocked' : 'Free Account';
+
+            const tbody = document.getElementById('documents-table-body');
+            if (docs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400">No documents created yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = docs.map(d => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-4 font-bold text-slate-800">${d.title}</td>
+                    <td class="p-4 uppercase text-xs font-bold text-blue-600">${d.type}</td>
+                    <td class="p-4 text-slate-500">${new Date(d.updated_at).toLocaleDateString()}</td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="editDocument(${d.id})" class="text-blue-600 font-bold hover:underline">Edit</button>
+                        <button onclick="deleteDocument(${d.id})" class="text-red-500 font-bold hover:underline">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Document Generator Flow
+        function startGenerator(type) {
+            if (!currentUser) {
+                openAuthModal('login');
+                return;
+            }
+            if (!currentUser.is_premium && currentUser.role !== 'admin') {
+                triggerPaymentModal();
+                return;
+            }
+
+            currentDocId = null;
+            currentDocType = type;
+            document.getElementById('generator-form-title').innerText = `Create ${type.replace('-', ' ').toUpperCase()}`;
+
+            if (type === 'cv') {
+                document.getElementById('form-fields-cv').classList.remove('hidden');
+                document.getElementById('form-fields-letter').classList.add('hidden');
+            } else {
+                document.getElementById('form-fields-cv').classList.add('hidden');
+                document.getElementById('form-fields-letter').classList.remove('hidden');
+            }
+
+            navigateTo('generator');
+            renderLivePreview();
+        }
+
+        function renderLivePreview() {
+            const container = document.getElementById('a4-document-container');
+            if (currentDocType === 'cv') {
+                const name = document.getElementById('cv-name').value || 'John Doe';
+                const title = document.getElementById('cv-title').value || 'Software Engineer';
+                const summary = document.getElementById('cv-summary').value || 'Experienced professional with expertise in technical strategy and project leadership...';
+                const skills = document.getElementById('cv-skills').value || 'Python, JavaScript, Team Leadership';
+
+                container.innerHTML = `
+                    <div class="border-b-2 border-blue-600 pb-4 mb-6">
+                        <h1 class="text-3xl font-extrabold text-blue-900">${name}</h1>
+                        <p class="text-slate-600 font-semibold">${title}</p>
+                    </div>
+                    <div class="mb-6">
+                        <h3 class="font-bold text-blue-800 text-sm border-b mb-2">PROFESSIONAL SUMMARY</h3>
+                        <p class="text-slate-700 text-sm leading-relaxed">${summary}</p>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-blue-800 text-sm border-b mb-2">CORE SKILLS</h3>
+                        <p class="text-slate-700 text-sm">${skills}</p>
+                    </div>
+                `;
+            } else {
+                const name = document.getElementById('letter-name').value || 'Jane Applicant';
+                const company = document.getElementById('letter-company').value || 'Target Corporation';
+                const text = document.getElementById('letter-text').value || 'Dear Hiring Manager,\n\nI am thrilled to submit my application...';
+
+                container.innerHTML = `
+                    <div class="border-b pb-4 mb-6">
+                        <h1 class="text-2xl font-bold text-slate-900">${name}</h1>
+                        <p class="text-slate-500 text-sm">To: ${company}</p>
+                    </div>
+                    <div class="text-sm text-slate-700 whitespace-pre-line leading-relaxed">${text}</div>
+                `;
+            }
+        }
+
+        async function saveCurrentDocument() {
+            const payload = {
+                type: currentDocType,
+                title: document.getElementById('cv-name')?.value ? `${document.getElementById('cv-name').value} CV` : 'New Career Document',
+                template: document.getElementById('doc-template-select').value,
+                content: {
+                    personal: { fullName: document.getElementById('cv-name')?.value },
+                    summary: document.getElementById('cv-summary')?.value,
+                    skills: document.getElementById('cv-skills')?.value,
+                    letterText: document.getElementById('letter-text')?.value
+                }
+            };
+
+            const url = currentDocId ? `/api/documents/${currentDocId}` : '/api/documents';
+            const method = currentDocId ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                showToast('Document saved successfully!');
+            } else {
+                showToast('Error saving document.', 'error');
+            }
+        }
+
+        async function enhanceWithAI(promptType) {
+            const textInput = promptType === 'summary' ? document.getElementById('cv-summary').value : document.getElementById('letter-text').value;
+            const res = await fetch('/api/documents/ai-enhance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt_type: promptType, text: textInput })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                if (promptType === 'summary') document.getElementById('cv-summary').value = data.enhanced_text;
+                else document.getElementById('letter-text').value = data.enhanced_text;
+                renderLivePreview();
+                showToast('Content enhanced with AI!');
+            }
+        }
+
+        // Payment Handlers
+        function triggerPaymentModal() {
+            document.getElementById('modal-payment').classList.remove('hidden');
+        }
+
+        function initPayPalSDK() {
+            if (window.paypal) {
+                paypal.Buttons({
+                    createOrder: async () => {
+                        const res = await fetch('/api/payment/paypal/create', { method: 'POST' });
+                        const data = await res.json();
+                        return data.order_id;
+                    },
+                    onApprove: async (data) => {
+                        const res = await fetch('/api/payment/paypal/capture', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ order_id: data.orderID })
+                        });
+                        if (res.ok) {
+                            showToast('🎉 CareerPro Unlimited Access Unlocked!');
+                            currentUser.is_premium = true;
+                            updateUIForLoggedInUser();
+                            closeModal('modal-payment');
+                        }
+                    }
+                }).render('#paypal-button-container');
+            }
+        }
+
+        async function handleMTNPayment() {
+            const phone = document.getElementById('mtn-phone-number').value;
+            if (!phone) {
+                showToast('Please enter your MTN Mobile Money number.', 'error');
+                return;
+            }
+
+            const res = await fetch('/api/payment/mtn/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone_number: phone })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                showToast('Payment successful! Account upgraded.');
+                currentUser.is_premium = true;
+                updateUIForLoggedInUser();
+                closeModal('modal-payment');
+            } else {
+                showToast(data.error || 'MTN Payment failed.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
