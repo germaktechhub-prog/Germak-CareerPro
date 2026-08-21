@@ -12,7 +12,7 @@ class Config:
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'default-dev-secret-key-change-in-prod')
     
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', f'sqlite:///{BASE_DIR / "instance" / "careerpro.db"}')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', f'sqlite:///{BASE_DIR / "careerpro.db"}')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Uploads & Storage
