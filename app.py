@@ -1,4 +1,5 @@
 import os
+import tempfile
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_login import LoginManager, current_user, login_required
@@ -15,7 +16,12 @@ def create_app():
     app = Flask(__name__, template_folder='templates', static_folder='static')
     app.config.from_object(Config)
 
-    # Ensure required asset directories exist
+    # Force absolute path in /tmp to guarantee write permissions on Render
+    db_dir = tempfile.gettempdir()
+    db_path = os.path.join(db_dir, 'careerpro.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+
+    # Ensure asset directories exist
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     os.makedirs(app.config['GENERATED_FOLDER'], exist_ok=True)
 
