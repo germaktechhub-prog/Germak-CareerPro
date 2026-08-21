@@ -15,10 +15,9 @@ def create_app():
     app = Flask(__name__, template_folder='templates', static_folder='static')
     app.config.from_object(Config)
 
-    # Ensure directories exist
+    # Ensure required asset directories exist
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     os.makedirs(app.config['GENERATED_FOLDER'], exist_ok=True)
-    os.makedirs(os.path.join(app.root_path, 'instance'), exist_ok=True)
 
     db.init_app(app)
 

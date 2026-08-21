@@ -1,4 +1,5 @@
 import os
+import tempfile
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -6,7 +7,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = os.path.abspath(os.path.join(BASE_DIR, 'careerpro.db'))
+
+# Set database path to system temp directory for Render Linux compatibility
+DB_DIR = tempfile.gettempdir()
+DB_PATH = os.path.join(DB_DIR, 'careerpro.db')
 
 class Config:
     """Base application configuration."""
