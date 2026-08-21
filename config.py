@@ -1,5 +1,4 @@
 import os
-import tempfile
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -8,16 +7,12 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 
-# Set database path to system temp directory for Render Linux compatibility
-DB_DIR = tempfile.gettempdir()
-DB_PATH = os.path.join(DB_DIR, 'careerpro.db')
-
 class Config:
     """Base application configuration."""
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'default-dev-secret-key-change-in-prod')
     
-    # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', f'sqlite:///{DB_PATH}')
+    # Database: Uses DATABASE_URL if set (e.g., PostgreSQL), otherwise falls back to in-memory SQLite
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite://')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Uploads & Storage
